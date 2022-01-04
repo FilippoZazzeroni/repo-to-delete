@@ -1,4 +1,30 @@
-() public view returns(uint256) {
+//SPDX-License-Identifier: MIT
+
+pragma solidity >= 0.6.6 < 0.9.0;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+//import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
+
+contract FundMe {
+    //using SafeMathChainlink for uint256;
+
+    mapping(address => uint256) public addressToAmountFunded;
+    address[] public funders;
+    address public owner;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    function fund() public payable {
+        uint256 minimumETH = 50 * 10 ** 18;
+        require(getConversionRate(msg.value) >= minimumETH, "You need to spend more ETH!");
+        addressToAmountFunded[msg.sender] += msg.value;
+        funders.push(msg.sender);    
+    }
+
+    function getBalance() public view returns(uint256) {
         return address(this).balance;
     }
 
@@ -34,4 +60,4 @@
             addressToAmountFunded[funder] = 0;
         }
         funders = new address[](0);
-    }
+    }}
